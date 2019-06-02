@@ -135,7 +135,7 @@ void LoadBalancingListener::serverErrorReturn(int errorCode)
 void LoadBalancingListener::joinRoomEventAction(int playerNr, const JVector<int>& playernrs, const Player& player)
 {
 	Console::get().writeLine(JString("player ") + playerNr + L" " + player.getName() + L" has joined the game");
-	updateGroups();
+
 }
 
 void LoadBalancingListener::leaveRoomEventAction(int playerNr, bool isInactive)
@@ -153,68 +153,70 @@ void LoadBalancingListener::customEventAction(int playerNr, nByte eventCode, con
 	ExitGames::Common::Hashtable eventContent = ExitGames::Common::ValueObject<ExitGames::Common::Hashtable>(eventContentObj).getDataCopy();
 	if(eventCode == 1)
 	{
-		Object const* obj = eventContent.getValue("1");
-		if(!obj) obj = eventContent.getValue((nByte)1);
-		if(!obj) obj = eventContent.getValue(1);
-		if(!obj) obj = eventContent.getValue(1.0);
-		if(obj)
-		{
-			int color = (int)(obj->getType() == TypeCode::DOUBLE ?  ((ValueObject<double>*)obj)->getDataCopy() : ((ValueObject<int>*)obj)->getDataCopy());
-		}
-		else
-			Console::get().writeLine(L"bad color event");
+		Console::get().writeLine(L"Event 1");
+		//Object const* obj = eventContent.getValue("1");
+		//if(!obj) obj = eventContent.getValue((nByte)1);
+		//if(!obj) obj = eventContent.getValue(1);
+		//if(!obj) obj = eventContent.getValue(1.0);
+		//if(obj)
+		//{
+		//	int color = (int)(obj->getType() == TypeCode::DOUBLE ?  ((ValueObject<double>*)obj)->getDataCopy() : ((ValueObject<int>*)obj)->getDataCopy());
+		//}
+		//else
+		//	Console::get().writeLine(L"bad color event");
 	}
 	else if(eventCode == 2)
 	{
-		Object const* obj = eventContent.getValue("1");
-		if(!obj)
-			obj = eventContent.getValue((nByte)1);
-		if(!obj)
-			obj = eventContent.getValue(1);
-		if(!obj)
-			obj = eventContent.getValue(1.0);
-		if(obj && obj->getDimensions() == 1 && obj->getSizes()[0] == 2)
-		{
-			int x = 0; int y = 0;
-			if(obj->getType() == TypeCode::DOUBLE)
-			{
-				double* data = ((ValueObject<double*>*)obj)->getDataCopy();
-				x = (int)data[0];
-				y = (int)data[1];
-			}
-			if(obj->getType() == TypeCode::INTEGER)
-			{
-				int* data = ((ValueObject<int*>*)obj)->getDataCopy();
-				x = (int)data[0];
-				y = (int)data[1];
-			}
-			else if(obj->getType() == TypeCode::BYTE)
-			{
-				nByte* data = ((ValueObject<nByte*>*)obj)->getDataCopy();
-				x = (int)data[0];
-				y = (int)data[1];
-			}
-			else if(obj->getType() == TypeCode::OBJECT)
-			{
-				Object* data = ((ValueObject<Object*>*)obj)->getDataCopy();
-				if(data[0].getType() == TypeCode::INTEGER)
-				{
-					x = ((ValueObject<int>*)(data + 0))->getDataCopy();
-					y = ((ValueObject<int>*)(data + 1))->getDataCopy();
-				}
-				else
-				{
-					x = (int)((ValueObject<double>*)(data + 0))->getDataCopy();
-					y = (int)((ValueObject<double>*)(data + 1))->getDataCopy();
-				}
-				MemoryManagement::deallocateArray(data);
-			}
-#ifdef __UNREAL__
-#else
-#endif
-		}
-		else
-			Console::get().writeLine(L"Bad position event");
+		Console::get().writeLine(L"Event 2");
+//		Object const* obj = eventContent.getValue("1");
+//		if(!obj)
+//			obj = eventContent.getValue((nByte)1);
+//		if(!obj)
+//			obj = eventContent.getValue(1);
+//		if(!obj)
+//			obj = eventContent.getValue(1.0);
+//		if(obj && obj->getDimensions() == 1 && obj->getSizes()[0] == 2)
+//		{
+//			int x = 0; int y = 0;
+//			if(obj->getType() == TypeCode::DOUBLE)
+//			{
+//				double* data = ((ValueObject<double*>*)obj)->getDataCopy();
+//				x = (int)data[0];
+//				y = (int)data[1];
+//			}
+//			if(obj->getType() == TypeCode::INTEGER)
+//			{
+//				int* data = ((ValueObject<int*>*)obj)->getDataCopy();
+//				x = (int)data[0];
+//				y = (int)data[1];
+//			}
+//			else if(obj->getType() == TypeCode::BYTE)
+//			{
+//				nByte* data = ((ValueObject<nByte*>*)obj)->getDataCopy();
+//				x = (int)data[0];
+//				y = (int)data[1];
+//			}
+//			else if(obj->getType() == TypeCode::OBJECT)
+//			{
+//				Object* data = ((ValueObject<Object*>*)obj)->getDataCopy();
+//				if(data[0].getType() == TypeCode::INTEGER)
+//				{
+//					x = ((ValueObject<int>*)(data + 0))->getDataCopy();
+//					y = ((ValueObject<int>*)(data + 1))->getDataCopy();
+//				}
+//				else
+//				{
+//					x = (int)((ValueObject<double>*)(data + 0))->getDataCopy();
+//					y = (int)((ValueObject<double>*)(data + 1))->getDataCopy();
+//				}
+//				MemoryManagement::deallocateArray(data);
+//			}
+//#ifdef __UNREAL__
+//#else
+//#endif
+//		}
+//		else
+//			Console::get().writeLine(L"Bad position event");
 	}
 }
 

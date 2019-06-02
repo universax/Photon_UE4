@@ -25,7 +25,7 @@
 *	For more info on custom blueprint nodes visit documentation:
 *	https://wiki.unrealengine.com/Custom_Blueprint_Node_Creation
 */
-UCLASS(ClassGroup = PCL, Blueprintable)
+UCLASS(ClassGroup = Photon, Blueprintable)
 class UPhotonBPLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
@@ -51,16 +51,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		void JoinRoom(FString name);
 
+	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
+		bool GetIsInRoom() { return mpClient->getIsInGameRoom(); }
+
+	// Send local player event
+	// Spawn
+	
+	// Transform
+	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
+		void SendLocalTransform(FVector pos);
+
+	// Receive other player event
+	// When other player joined
+	// Spawn
+
+	// Transform
+
 
 private:
 	ExitGames::LoadBalancing::Client* mpClient;
 	LoadBalancingListener* mpListener;
 
-	
 	FString mServerAddress;
 	FString mAppID;
 	FString mAppVersion;
 	
+	// Flags
+	bool mIsJoinedRoom;
+
+	// Util
 	ExitGames::Common::JString ToJString(FString fstr);
 	FString ToFString(ExitGames::Common::JString jstr);
 };

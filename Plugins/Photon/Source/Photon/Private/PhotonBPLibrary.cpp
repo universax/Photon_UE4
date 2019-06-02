@@ -11,7 +11,8 @@ using namespace ExitGames::LoadBalancing;
 UPhotonBPLibrary::UPhotonBPLibrary(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer),
 mpClient(NULL),
-mpListener(NULL)
+mpListener(NULL),
+mIsJoinedRoom(false)
 {
 	mServerAddress = TEXT("ns.exitgames.com");
 	mAppID = TEXT("<no-app-id>");
@@ -72,7 +73,13 @@ void UPhotonBPLibrary::JoinRoom(FString name)
 	mpClient->opJoinRoom(ToJString(name));
 }
 
-
+void UPhotonBPLibrary::SendLocalTransform(FVector pos)
+{
+	Hashtable data;
+	nByte coords[] = { static_cast<nByte>(pos.X), static_cast<nByte>(pos.Y) };
+	data.put((nByte)1, coords, 2);
+	mpClient->opRaiseEvent(false, data, 1);
+}
 
 
 // ------------------------------------------------------------
