@@ -2,9 +2,6 @@
 
 #include "LoadBalancing-cpp/inc/Client.h"
 
-
-
-
 struct LocalPlayer
 {
 	LocalPlayer();
@@ -38,6 +35,11 @@ public:
 	const ExitGames::LoadBalancing::Client* getClient() {
 		return mpLbc;
 	}
+
+
+
+	void callback(void (*ptn)());
+	void (*func)();
 
 private:
 	//From Common::BaseListener

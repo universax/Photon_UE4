@@ -59,6 +59,7 @@ public:
 
 LocalPlayer::LocalPlayer(void) : x(0), y(0), color(randomColor(100)), lastUpdateTime(0)
 {
+	
 }
 
 LoadBalancingListener::LoadBalancingListener() : mpLbc(NULL), mLocalPlayerNr(0), mAutomove(true), mUseGroups(true), mSendGroup(0)
@@ -104,6 +105,11 @@ bool LoadBalancingListener::getAutomove(void)
 	return mAutomove;
 }
 
+void LoadBalancingListener::callback(void(*ptn)())
+{
+	ptn();
+}
+
 void LoadBalancingListener::debugReturn(int debugLevel, const JString& string)
 {
 	Console::get().debugReturn(debugLevel, string);
@@ -135,7 +141,6 @@ void LoadBalancingListener::serverErrorReturn(int errorCode)
 void LoadBalancingListener::joinRoomEventAction(int playerNr, const JVector<int>& playernrs, const Player& player)
 {
 	Console::get().writeLine(JString("player ") + playerNr + L" " + player.getName() + L" has joined the game");
-
 }
 
 void LoadBalancingListener::leaveRoomEventAction(int playerNr, bool isInactive)
