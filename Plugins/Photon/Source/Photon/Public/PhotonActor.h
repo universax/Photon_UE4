@@ -2,14 +2,15 @@
 
 #pragma once
 
+#include "ListnerBase.h"
+#include "LoadBalancingListener.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "LoadBalancingListener.h"
-#include "PhotonListnerComponent.h"
 #include "PhotonActor.generated.h"
 
 UCLASS()
-class PHOTON_API APhotonActor : public AActor
+class PHOTON_API APhotonActor : public AActor, public ListnerBase
 {
 	GENERATED_BODY()
 	
@@ -39,26 +40,32 @@ public:
 	// Func
 	UFUNCTION(BlueprintCallable, Category = "Photon | Common")
 		void Setup();
-
 	UFUNCTION(BlueprintCallable, Category = "Photon | Common")
 		void Update();
-
 	// For Debug
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		void CreateRoom(FString name);
-
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		TArray<FString> GetRoomList();
-
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		void JoinRoom(FString name);
-
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		bool GetIsInRoom() { return mpClient->getIsInGameRoom(); }
 
+
+	// Callback from Listner
+	virtual void OnJoinRoomEventAction(int playerNr, const ExitGames::Common::JString& playerName, bool local) {
+
+	}
+	virtual void OnLeaveRoomEventAction(int playerNr) {
+
+	}
+	virtual void OnChangePlayerPos(int playerNr, int x, int y) {
+
+	}
+
 	// Send local player event
 	// Spawn
-
 	// Transform
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		void SendLocalTransform(FVector pos);
@@ -71,8 +78,6 @@ public:
 
 
 private:
-	UPhotonListnerComponent *listnerComponent = nullptr;
-
 	ExitGames::LoadBalancing::Client* mpClient;
 	LoadBalancingListener* mpListener;
 

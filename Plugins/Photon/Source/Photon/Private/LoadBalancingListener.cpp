@@ -62,7 +62,7 @@ LocalPlayer::LocalPlayer(void) : x(0), y(0), color(randomColor(100)), lastUpdate
 	
 }
 
-LoadBalancingListener::LoadBalancingListener() : mpLbc(NULL), mLocalPlayerNr(0), mAutomove(true), mUseGroups(true), mSendGroup(0)
+LoadBalancingListener::LoadBalancingListener(ListnerBase* listnerBase) : ue4Listner(listnerBase), mpLbc(NULL), mLocalPlayerNr(0)
 {
 }
 
@@ -80,35 +80,6 @@ void LoadBalancingListener::connect(const JString& userName)
 	mpLbc->connect(AuthenticationValues().setUserID(JString()+GETTIMEMS()), userName);
 }
 
-void LoadBalancingListener::setUseGroups(bool value)
-{
-	mUseGroups = value;
-}
-
-bool LoadBalancingListener::getUseGroups(void)
-{
-	return mUseGroups;
-}
-
-void LoadBalancingListener::setSendGroup(nByte value)
-{
-	mSendGroup = value;
-}
-
-void LoadBalancingListener::setAutomove(bool a)
-{
-	mAutomove = a;
-}
-
-bool LoadBalancingListener::getAutomove(void)
-{
-	return mAutomove;
-}
-
-void LoadBalancingListener::callback(void(*ptn)())
-{
-	ptn();
-}
 
 void LoadBalancingListener::debugReturn(int debugLevel, const JString& string)
 {
@@ -141,6 +112,7 @@ void LoadBalancingListener::serverErrorReturn(int errorCode)
 void LoadBalancingListener::joinRoomEventAction(int playerNr, const JVector<int>& playernrs, const Player& player)
 {
 	Console::get().writeLine(JString("player ") + playerNr + L" " + player.getName() + L" has joined the game");
+	ue4Listner->OnJoinRoomEventAction(playerNr, player.getName(), player.getNumber() == mpLbc->getLocalPlayer().getNumber());
 }
 
 void LoadBalancingListener::leaveRoomEventAction(int playerNr, bool isInactive)
@@ -150,6 +122,7 @@ void LoadBalancingListener::leaveRoomEventAction(int playerNr, bool isInactive)
 	else
 	{
 		Console::get().writeLine(JString(L"player ") + playerNr + L" has abandoned the game");
+		ue4Listner->OnLeaveRoomEventAction(playerNr);
 	}
 }
 
@@ -475,28 +448,4 @@ void LoadBalancingListener::raiseColorEvent(void)
 	Hashtable data;
 	data.put((nByte)1, mLocalPlayer.color);
 	//mpLbc->opRaiseEvent(true, data, 1, RaiseEventOptions().setEventCaching(ExitGames::Lite::EventCache::ADD_TO_ROOM_CACHE).setInterestGroup(mSendGroup?mSendGroup:mUseGroups?getGroupByPos():0));
-}
-
-
-void LoadBalancingListener::changeRandomColor(void)
-{
-	mLocalPlayer.color = randomColor(100);
-	raiseColorEvent();
-}
-
-
-void LoadBalancingListener::updateGroups(void)
-{
-	if(mpLbc->getIsInRoom())
-	{
-		//ExitGames::Common::JVector<nByte> remove;
-		//if(mUseGroups)
-		//{
-		//	ExitGames::Common::JVector<nByte> add;
-		//	add.addElement(getGroupByPos());
-		//	mpLbc->opChangeGroups(&remove, &add);
-		//}
-		//else
-		//	mpLbc->opChangeGroups(&remove, NULL);
-	}
 }

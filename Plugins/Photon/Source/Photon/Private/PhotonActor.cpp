@@ -18,9 +18,6 @@ APhotonActor::APhotonActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	listnerComponent = CreateDefaultSubobject<UPhotonListnerComponent>("PhotonListner");
-	listnerComponent->AddToRoot();
-
 }
 
 // Called when the game starts or when spawned
@@ -44,7 +41,7 @@ void APhotonActor::Setup()
 	AppID = AppID;
 	AppVersion = AppVersion;
 
-	mpListener = new LoadBalancingListener();
+	mpListener = new LoadBalancingListener(this);
 	mpClient = new ExitGames::LoadBalancing::Client(*mpListener, TCHAR_TO_UTF8(*AppID), TCHAR_TO_UTF8(*AppVersion), ExitGames::Photon::ConnectionProtocol::DEFAULT, false, RegionSelectionMode::BEST);
 	mpListener->setLBC(mpClient);
 

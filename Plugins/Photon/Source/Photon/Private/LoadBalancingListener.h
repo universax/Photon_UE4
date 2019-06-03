@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LoadBalancing-cpp/inc/Client.h"
+#include "ListnerBase.h"
 
 struct LocalPlayer
 {
@@ -14,21 +15,14 @@ struct LocalPlayer
 class LoadBalancingListener : public ExitGames::LoadBalancing::Listener
 {
 public: 
-	LoadBalancingListener();
+	LoadBalancingListener(ListnerBase *listnerBase);
 	~LoadBalancingListener(void);
 
 	void setLBC(ExitGames::LoadBalancing::Client* pLbc);
 	void connect(const ExitGames::Common::JString& userName);
-	void setUseGroups(bool value);
-	bool getUseGroups(void);
-	void updateGroups(void);
-	void setSendGroup(nByte value);
 	void service(void);
 	void createRoom(void);
 	void createRoom(ExitGames::Common::JString roomName);
-	void setAutomove(bool a);
-	bool getAutomove(void);
-	void changeRandomColor(void);
 	bool setLocalPlayerPos(int x, int y);
 	void moveLocalPlayer(void);
 
@@ -38,8 +32,8 @@ public:
 
 
 
-	void callback(void (*ptn)());
-	void (*func)();
+	// Delegate for UE4
+	ListnerBase* ue4Listner = nullptr;
 
 private:
 	//From Common::BaseListener
@@ -87,7 +81,4 @@ private:
 	int mLocalPlayerNr;
 	int mGridSize;
 	ExitGames::Common::JString mMap;
-	bool mAutomove;
-	bool mUseGroups;
-	int mSendGroup; // forces group in outgoing events even if mUseGroups = false
 };
