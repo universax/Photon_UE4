@@ -2,7 +2,7 @@
 
 
 #include "PhotonActor.h"
-#include "Console.h"
+
 #include "Photon.h"
 
 
@@ -83,12 +83,25 @@ void APhotonActor::JoinRoom(FString name)
 	mpClient->opJoinRoom(ToJString(name));
 }
 
-void APhotonActor::SendLocalTransform(FVector pos)
+void APhotonActor::SendLocalTransform(FTransform transform)
 {
+	// Location
+	FVector location = transform.GetLocation();
+	// Rotation
+	FQuat rotation = transform.GetRotation();
+
 	Hashtable data;
-	nByte coords[] = { static_cast<nByte>(pos.X), static_cast<nByte>(pos.Y) };
-	data.put((nByte)1, coords, 2);
-	mpClient->opRaiseEvent(false, data, 1);
+	float posture[] = { 
+		static_cast<float>(location.X),
+		static_cast<float>(location.Y),
+		static_cast<float>(location.Z),
+		static_cast<float>(rotation.X),
+		static_cast<float>(rotation.Y),
+		static_cast<float>(rotation.Z),
+		static_cast<float>(rotation.W)
+	};
+	data.put((nByte)1, posture, 7);
+	mpClient->opRaiseEvent(false, data, 2);
 }
 
 

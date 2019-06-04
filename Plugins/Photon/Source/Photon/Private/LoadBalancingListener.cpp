@@ -145,56 +145,33 @@ void LoadBalancingListener::customEventAction(int playerNr, nByte eventCode, con
 	}
 	else if(eventCode == 2)
 	{
-		Console::get().writeLine(L"Event 2");
-//		Object const* obj = eventContent.getValue("1");
-//		if(!obj)
-//			obj = eventContent.getValue((nByte)1);
-//		if(!obj)
-//			obj = eventContent.getValue(1);
-//		if(!obj)
-//			obj = eventContent.getValue(1.0);
-//		if(obj && obj->getDimensions() == 1 && obj->getSizes()[0] == 2)
-//		{
-//			int x = 0; int y = 0;
-//			if(obj->getType() == TypeCode::DOUBLE)
-//			{
-//				double* data = ((ValueObject<double*>*)obj)->getDataCopy();
-//				x = (int)data[0];
-//				y = (int)data[1];
-//			}
-//			if(obj->getType() == TypeCode::INTEGER)
-//			{
-//				int* data = ((ValueObject<int*>*)obj)->getDataCopy();
-//				x = (int)data[0];
-//				y = (int)data[1];
-//			}
-//			else if(obj->getType() == TypeCode::BYTE)
-//			{
-//				nByte* data = ((ValueObject<nByte*>*)obj)->getDataCopy();
-//				x = (int)data[0];
-//				y = (int)data[1];
-//			}
-//			else if(obj->getType() == TypeCode::OBJECT)
-//			{
-//				Object* data = ((ValueObject<Object*>*)obj)->getDataCopy();
-//				if(data[0].getType() == TypeCode::INTEGER)
-//				{
-//					x = ((ValueObject<int>*)(data + 0))->getDataCopy();
-//					y = ((ValueObject<int>*)(data + 1))->getDataCopy();
-//				}
-//				else
-//				{
-//					x = (int)((ValueObject<double>*)(data + 0))->getDataCopy();
-//					y = (int)((ValueObject<double>*)(data + 1))->getDataCopy();
-//				}
-//				MemoryManagement::deallocateArray(data);
-//			}
-//#ifdef __UNREAL__
-//#else
-//#endif
-//		}
-//		else
-//			Console::get().writeLine(L"Bad position event");
+		//Console::get().writeLine(L"Event 2");
+		Object const* obj = eventContent.getValue("1");
+		if(!obj) obj = eventContent.getValue((nByte)1);
+		if(!obj) obj = eventContent.getValue(1);
+		if(!obj) obj = eventContent.getValue(1.0);
+		if(obj && obj->getDimensions() == 1 && obj->getSizes()[0] == 7)
+		{
+			float x = 0; float y = 0; float z = 0;
+			float qx(0), qy(0), qz(0), qw(0);
+			if (obj->getType() == TypeCode::EG_FLOAT)
+			{
+				float* data = ((ValueObject<float*>*)obj)->getDataCopy();
+				x = (float)data[0];
+				y = (float)data[1];
+				z = (float)data[2];
+				qx = (float)data[3];
+				qy = (float)data[4];
+				qz = (float)data[5];
+				qw = (float)data[6];
+			}
+			ue4Listner->OnChangePlayerPos(playerNr, x, y, z, qx, qy, qz, qw);
+#ifdef __UNREAL__
+#else
+#endif
+		}
+		else
+			Console::get().writeLine(L"Bad position event");
 	}
 }
 
