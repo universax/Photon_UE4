@@ -166,9 +166,6 @@ void LoadBalancingListener::customEventAction(int playerNr, nByte eventCode, con
 				qw = (float)data[6];
 			}
 			ue4Listner->OnChangePlayerPos(playerNr, x, y, z, qx, qy, qz, qw);
-#ifdef __UNREAL__
-#else
-#endif
 		}
 		else
 			Console::get().writeLine(L"Bad position event");

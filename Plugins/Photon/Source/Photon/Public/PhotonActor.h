@@ -11,7 +11,7 @@
 #include "PhotonActor.generated.h"
 
 // Delegate
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FJoinRoomDelegate, int32, playerNr, FString, playerName, bool, local);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FJoinRoomDelegate, int32, playerNr, FString, playerName, bool, local, const TArray<int32>&, players);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FPlayerTransformDelegate, int32, playerNr, FVector, pos, FRotator, rot);
 
 UCLASS()
@@ -63,12 +63,13 @@ public:
 	FJoinRoomDelegate OnJoinRoomEventDelegate;
 	virtual void OnJoinRoomEventAction(int playerNr, const ExitGames::Common::JString& playerName, bool local) {
 		Console::get().writeLine(L"OnJoinRoomEventAction");
-		if (!local)
-		{
-			// Spawn
-			Console::get().writeLine(L"Spawn Remote Player.");
-			OnJoinRoomEventDelegate.Broadcast(playerNr, ToFString(playerName), local);
+		ExitGames::LoadBalancing::MutableRoom room = mpClient->getCurrentlyJoinedRoom();
+		ExitGames::Common::JVector<ExitGames::LoadBalancing::Player*> players = room.getPlayers();
+		TArray<int32> ps;
+		for (int i = 0; i < (int)room.getPlayerCount(); i++) {
+			ps.Add(playerNr);
 		}
+		OnJoinRoomEventDelegate.Broadcast(playerNr, ToFString(playerName), local, ps);
 	}
 	virtual void OnLeaveRoomEventAction(int playerNr) {
 		Console::get().writeLine(L"OnLeaveRoomEventAction");
