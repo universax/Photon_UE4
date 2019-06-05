@@ -37,8 +37,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-
 public:
 	// Prop
 	UPROPERTY(EditAnywhere, Category = "Photon | Common")
@@ -76,21 +74,20 @@ public:
 	virtual void OnJoinRoomEventAction(int playerNr, const ExitGames::Common::JString& playerName, bool local) {
 		Console::get().writeLine(L"OnJoinRoomEventAction");
 
-		APhotonCharacter* joinedPlayer = NewObject<APhotonCharacter>();
 		TArray<APhotonCharacter*> photonPlayers;
-
+		APhotonCharacter* joinedPlayer = NewObject<APhotonCharacter>();
 
 		ExitGames::LoadBalancing::MutableRoom room = mpClient->getCurrentlyJoinedRoom();
-		ExitGames::Common::JVector<ExitGames::LoadBalancing::Player*> players = room.getPlayers();
+		mRoomPlayers = room.getPlayers();
 		for (int i = 0; i < (int)room.getPlayerCount(); i++) {
 			APhotonCharacter* p = NewObject<APhotonCharacter>();
-			p->SetPlayer(players[i]);
-			photonPlayers.AddUnique(p);
+			p->SetPlayer(mRoomPlayers[i]);
+			photonPlayers.Add(p);
 
 			// It's me
-			if (playerNr == players[i]->getNumber())
+			if (playerNr == mRoomPlayers[i]->getNumber())
 			{
-				joinedPlayer->SetPlayer(players[i]);
+				joinedPlayer->SetPlayer(mRoomPlayers[i]);
 			}
 		}
 		OnJoinRoomEventDelegate.Broadcast(joinedPlayer, local, photonPlayers);
@@ -117,6 +114,9 @@ public:
 private:
 	ExitGames::LoadBalancing::Client* mpClient;
 	LoadBalancingListener* mpListener;
+
+	// Players
+	ExitGames::Common::JVector<ExitGames::LoadBalancing::Player*> mRoomPlayers;
 
 	// Flags
 	bool mIsJoinedRoom;
