@@ -83,6 +83,11 @@ void APhotonActor::JoinRoom(FString name)
 	mpClient->opJoinRoom(ToJString(name));
 }
 
+void APhotonActor::LeaveRoom()
+{
+	mpClient->opLeaveRoom();
+}
+
 void APhotonActor::SendLocalTransform(FTransform transform)
 {
 	// Location

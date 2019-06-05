@@ -2,17 +2,23 @@
 
 #pragma once
 
+#include "Photon.h"
+
 #include "ListnerBase.h"
 #include "LoadBalancingListener.h"
 #include "Console.h"
+
+#include "PhotonPlayer.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PhotonActor.generated.h"
 
 // Delegate
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FJoinRoomDelegate, int32, playerNr, FString, playerName, bool, local, const TArray<int32>&, players);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FJoinRoomDelegate, int32, playerNr, FString, playerName, bool, local, const TArray<UPhotonPlayer*>&, players);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FPlayerTransformDelegate, int32, playerNr, FVector, pos, FRotator, rot);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLeaveRoomDelegate, int32, playerNr);
+
 
 UCLASS()
 class PHOTON_API APhotonActor : public AActor, public ListnerBase
@@ -55,6 +61,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		void JoinRoom(FString name);
 	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
+		void LeaveRoom();
+	UFUNCTION(BlueprintCallable, Category = "Photon | Debug")
 		bool GetIsInRoom() { return mpClient->getIsInGameRoom(); }
 
 
@@ -65,14 +73,19 @@ public:
 		Console::get().writeLine(L"OnJoinRoomEventAction");
 		ExitGames::LoadBalancing::MutableRoom room = mpClient->getCurrentlyJoinedRoom();
 		ExitGames::Common::JVector<ExitGames::LoadBalancing::Player*> players = room.getPlayers();
-		TArray<int32> ps;
+		TArray<UPhotonPlayer*> photonPlayers;
 		for (int i = 0; i < (int)room.getPlayerCount(); i++) {
-			ps.Add(playerNr);
+			UPhotonPlayer* p = NewObject<UPhotonPlayer>();
+			p->SetPlayer(players[i]);
+			photonPlayers.AddUnique(p);
 		}
-		OnJoinRoomEventDelegate.Broadcast(playerNr, ToFString(playerName), local, ps);
+		OnJoinRoomEventDelegate.Broadcast(playerNr, ToFString(playerName), local, photonPlayers);
 	}
+	UPROPERTY(BlueprintAssignable, Category = "Photon | Callback")
+	FLeaveRoomDelegate OnLeaveRoomEventDelegate;
 	virtual void OnLeaveRoomEventAction(int playerNr) {
 		Console::get().writeLine(L"OnLeaveRoomEventAction");
+		OnLeaveRoomEventDelegate.Broadcast(playerNr);
 	}
 	UPROPERTY(BlueprintAssignable, Category = "Photon | Callback")
 		FPlayerTransformDelegate OnPlayerTransformDelegate;
